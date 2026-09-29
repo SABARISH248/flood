@@ -1,0 +1,135 @@
+project:
+  name: "FloodSense India"
+  version: "1.0.0"
+  random_seed: 42
+  description: "Spatial GIS + ML Flood Susceptibility, Exposure, and Risk Prediction System"
+
+CRS:
+  analysis: "EPSG:4326"
+  raster: "EPSG:4326"
+
+models:
+  directory: "models/"
+  base_models:
+    - "xgboost"
+    - "random_forest"
+    - "lightgbm"
+    - "decision_tree"
+    - "logistic_regression"
+  voting: "soft"
+  stacking: true
+  meta_model: "meta_learner"
+
+features:
+  exact_order:
+    - "Latitude"
+    - "Longitude"
+    - "Rainfall (mm)"
+    - "Temperature (°C)"
+    - "Humidity (%)"
+    - "River Discharge (m³/s)"
+    - "Water Level (m)"
+    - "Elevation (m)"
+    - "Population Density"
+    - "Land Cover_Agricultural"
+    - "Land Cover_Desert"
+    - "Land Cover_Forest"
+    - "Land Cover_Urban"
+    - "Land Cover_Water Body"
+    - "Soil Type_Clay"
+    - "Soil Type_Loam"
+    - "Soil Type_Peat"
+    - "Soil Type_Sandy"
+    - "Soil Type_Silt"
+    - "Infrastructure"
+    - "Historical Floods"
+
+rasters:
+  directory: "data/rasters/"
+  feature_mapping:
+    Latitude: "data/rasters/latitude.tif"
+    Longitude: "data/rasters/longitude.tif"
+    "Rainfall (mm)": "data/rasters/rainfall.tif"
+    "Temperature (°C)": "data/rasters/temperature.tif"
+    "Humidity (%)": "data/rasters/humidity.tif"
+    "River Discharge (m³/s)": "data/rasters/river_discharge.tif"
+    "Water Level (m)": "data/rasters/water_level.tif"
+    "Elevation (m)": "data/rasters/elevation.tif"
+    "Population Density": "data/rasters/population_density.tif"
+    "Land Cover_Agricultural": "data/rasters/lc_agri.tif"
+    "Land Cover_Desert": "data/rasters/lc_desert.tif"
+    "Land Cover_Forest": "data/rasters/lc_forest.tif"
+    "Land Cover_Urban": "data/rasters/lc_urban.tif"
+    "Land Cover_Water Body": "data/rasters/lc_water.tif"
+    "Soil Type_Clay": "data/rasters/soil_clay.tif"
+    "Soil Type_Loam": "data/rasters/soil_loam.tif"
+    "Soil Type_Peat": "data/rasters/soil_peat.tif"
+    "Soil Type_Sandy": "data/rasters/soil_sandy.tif"
+    "Soil Type_Silt": "data/rasters/soil_silt.tif"
+    Infrastructure: "data/rasters/infrastructure.tif"
+    "Historical Floods": "data/rasters/historical_floods.tif"
+
+inventory:
+  path: "data/vectors/flood_inventory.gpkg"
+
+exposure:
+  population: "data/exposure/population.tif"
+  buildings: "data/exposure/buildings.tif"
+  roads: "data/exposure/roads.tif"
+  hospitals: "data/exposure/hospitals.gpkg"
+  schools: "data/exposure/schools.gpkg"
+
+vulnerability:
+  layers:
+    - "data/rasters/vulnerability_index.tif"
+
+boundaries:
+  state: "data/boundaries/states.gpkg"
+  district: "data/boundaries/districts.gpkg"
+  block: "data/boundaries/blocks.gpkg"
+  village: "data/boundaries/villages.gpkg"
+
+classification:
+  equal_interval_breaks: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+  jenks_classes: 5
+  class_labels:
+    - "Very Low"
+    - "Low"
+    - "Moderate"
+    - "High"
+    - "Very High"
+
+validation:
+  test_size: 0.2
+  spatial_block_size: 0.25
+  flood_year_column: "year"
+  number_of_folds: 5
+  sampling:
+    case_i_flood_dist_km: 5.0
+    case_ii_flood_dist_km: 3.0
+    case_ii_stream_dist_km: 4.0
+
+risk:
+  susceptibility_weight: 0.4
+  exposure_weight: 0.4
+  vulnerability_weight: 0.2
+  method: "weighted"
+
+scenario:
+  rainfall_min: -0.3
+  rainfall_max: 1.0
+  rainfall_step: 0.1
+
+map:
+  default_center: [25.5941, 85.1376]
+  default_zoom: 9
+  opacity: 0.7
+
+outputs:
+  directory: "outputs/"
+  susceptibility: "outputs/susceptibility/"
+  risk: "outputs/risk/"
+  validation: "outputs/validation/"
+  uncertainty: "outputs/uncertainty/"
+  reports: "outputs/reports/"
+  db: "data/field_records/feedback.db"
