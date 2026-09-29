@@ -21,12 +21,42 @@ def render_overview_page(sidebar_settings: dict):
     config = load_config()
     render_overview_kpis()
 
+    # ---- Place search (shared with Check My Location via session state) ----
+    st.markdown("### 🔎 Find risk for any place")
+    q = st.text_input("Search a place", placeholder="e.g. Patna, Guwahati, Kochi, Chennai…", key="ov_q")
+    if st.button("Search place", key="ov_btn") and q and q.strip():
+        try:
+            from src.geocode import geocode_place
+            results = geocode_place(q.strip(), limit=5)
+            if not results:
+                st.warning(f"No matching place found for '{q}'.")
+            else:
+                labels = [r["display_name"] for r in results]
+                pick = st.selectbox("Did you mean…?", labels, key="ov_pick")
+                r = results[labels.index(pick)]
+                st.session_state["fs_lat"] = r["latitude"]
+                st.session_state["fs_lon"] = r["longitude"]
+                st.session_state["fs_place"] = r["display_name"]
+                st.success(f"📍 {r['display_name']} → ({r['latitude']:.4f}, {r['longitude']:.4f}). "
+                           "Open **📍 Check My Location** for its flood probability + risk drivers.")
+        except ImportError:
+            st.error("Place search needs `geopy`: run `pip install geopy`.")
+        except (ConnectionError, ValueError) as e:
+            st.error(str(e))
+
     st.markdown("### 🗺️ Study Area Regional Overview")
 
     col_map, col_table = st.columns([7, 5])
 
     with col_map:
-        m = create_base_map(center=tuple(config["map"]["default_center"]), zoom=config["map"]["default_zoom"])
+        center = tuple(config["map"]["default_center"])
+        if st.session_state.get("fs_lat") and st.session_state.get("fs_lon"):
+            center = (st.session_state["fs_lat"], st.session_state["fs_lon"])
+        m = create_base_map(center=center, zoom=config["map"]["default_zoom"])
+        if st.session_state.get("fs_lat"):
+            import folium
+            folium.Marker([st.session_state["fs_lat"], st.session_state["fs_lon"]],
+                          tooltip=st.session_state.get("fs_place", "Searched place")).add_to(m)
         dist_path = config["boundaries"]["district"]
         try:
             gdf_dist = load_vector_data(dist_path)

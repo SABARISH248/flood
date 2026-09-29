@@ -14,6 +14,7 @@ def validate_feature_schema(
 ) -> bool:
     """
     Validate configured/input feature list against trained model expected feature order.
+    Normalizes spaces to underscores to support models like LightGBM that sanitize feature names.
     Throws FeatureValidationError if count or exact order differs.
     """
     if len(input_features) != len(expected_features):
@@ -23,7 +24,9 @@ def validate_feature_schema(
 
     mismatches = []
     for idx, (inp, exp) in enumerate(zip(input_features, expected_features)):
-        if inp != exp:
+        norm_inp = str(inp).replace(" ", "_")
+        norm_exp = str(exp).replace(" ", "_")
+        if norm_inp != norm_exp:
             mismatches.append(f"Position {idx}: Input '{inp}' vs Expected '{exp}'")
 
     if mismatches:

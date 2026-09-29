@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.utils import load_config
 from src.model_registry import ModelRegistry
-from api.routes import prediction, risk, feedback
+from api.routes import prediction, risk, feedback, geocode
 
 app = FastAPI(
     title="FloodSense India API",
@@ -30,6 +30,7 @@ app.add_middleware(
 app.include_router(prediction.router, prefix="/api/v1")
 app.include_router(risk.router, prefix="/api/v1")
 app.include_router(feedback.router, prefix="/api/v1")
+app.include_router(geocode.router, prefix="/api/v1")
 
 
 @app.get("/")
