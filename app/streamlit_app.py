@@ -40,6 +40,7 @@ from app.views.historical_events import render_historical_events_page
 from app.views.field_feedback import render_field_feedback_page
 from app.views.data_method import render_data_method_page
 from app.views.system_health import render_system_health_page
+from app.views.tn_district_prediction import render_tn_district_page
 
 
 def main():
@@ -48,6 +49,7 @@ def main():
 
     # Page Navigation menu
     page_menu = {
+        "🏙️ TN District Prediction": render_tn_district_page,
         "📊 Overview": render_overview_page,
         "🗺️ Susceptibility Map": render_susceptibility_page,
         "🎯 Risk & Priority Zones": render_risk_priority_page,

@@ -151,6 +151,10 @@
         "xgb",
         "lgb"
       ]
+    },
+    "dummy": {
+      "file": "dummy.joblib",
+      "type": "DummyClassifier"
     }
   },
   "feature_names": [

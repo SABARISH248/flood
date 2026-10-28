@@ -1,0 +1,22 @@
+{
+  "run_id": "RUN-2026-09-29-123445",
+  "n_valid_pixels": 10000,
+  "output_files": {
+    "xgboost": "outputs/susceptibility/xgboost_probability.tif",
+    "random_forest": "outputs/susceptibility/random_forest_probability.tif",
+    "lightgbm": "outputs/susceptibility/lightgbm_probability.tif",
+    "decision_tree": "outputs/susceptibility/decision_tree_probability.tif",
+    "logistic_regression": "outputs/susceptibility/logistic_regression_probability.tif",
+    "soft_voting": "outputs/susceptibility/soft_voting_probability.tif",
+    "stacking": "outputs/susceptibility/stacking_probability.tif"
+  },
+  "models_evaluated": [
+    "xgboost",
+    "random_forest",
+    "lightgbm",
+    "decision_tree",
+    "logistic_regression",
+    "soft_voting",
+    "stacking"
+  ]
+}
